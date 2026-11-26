@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redirecting...</title>
+</head>
+<body>
+<script>
+(function () {
+  "use strict";
+
+  const KEY = "site_visit_limit_v1";
+  const LIMIT = 2;
+  const TIME = 12 * 60 * 60 * 1000;
+
+  const LINK_1 = "https://example.com/link1";
+  const LINK_2 = "https://tinyurl.com/redirect65";
+
+  try {
+    const now = Date.now();
+    let data = null;
+
+    try {
+      data = JSON.parse(localStorage.getItem(KEY));
+    } catch (e) {}
+
+    if (
+      !data ||
+      typeof data.start !== "number" ||
+      typeof data.count !== "number" ||
+      now < data.start ||
+      now - data.start >= TIME
+    ) {
+      data = { start: now, count: 0 };
+    }
+
+    data.count++;
+    localStorage.setItem(KEY, JSON.stringify(data));
+
+    window.location.replace(
+      data.count <= LIMIT ? LINK_1 : LINK_2
+    );
+
+  } catch (e) {
+    window.location.replace(LINK_1);
+  }
+})();
+</script>
+</body>
+</html>
